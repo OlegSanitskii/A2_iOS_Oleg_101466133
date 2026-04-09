@@ -1,3 +1,5 @@
+//  A2_iOS_Oleg_101466133
+
 import SwiftUI
 import CoreData
 
