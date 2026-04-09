@@ -8,7 +8,7 @@ struct SearchView: View {
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \ProductEntity.name, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \ProductEntity.productID, ascending: true)],
         animation: .default
     )
     private var products: FetchedResults<ProductEntity>
@@ -34,23 +34,40 @@ struct SearchView: View {
                     .textFieldStyle(.roundedBorder)
                     .padding()
 
-                List(filteredProducts) { product in
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(product.name ?? "No Name")
-                            .font(.headline)
+                if filteredProducts.isEmpty {
+                    Spacer()
 
-                        Text(product.productDescription ?? "No Description")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                    Text("No matching products found")
+                        .font(.title3)
+                        .fontWeight(.semibold)
 
-                        Text(String(format: "$%.2f", product.price))
-                            .font(.subheadline)
+                    Text("Try searching with a different product name or description.")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
 
-                        Text("Provider: \(product.provider ?? "")")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                    Spacer()
+                } else {
+                    List(filteredProducts) { product in
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(product.name ?? "No Name")
+                                .font(.headline)
+
+                            Text(product.productDescription ?? "No Description")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+
+                            Text(String(format: "$%.2f", product.price))
+                                .font(.subheadline)
+
+                            Text("Provider: \(product.provider ?? "")")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(.vertical, 4)
                     }
-                    .padding(.vertical, 4)
+                    .listStyle(.plain)
                 }
             }
             .navigationTitle("Search Products")
