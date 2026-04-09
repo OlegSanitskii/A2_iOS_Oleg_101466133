@@ -2,6 +2,7 @@
 
 
 import SwiftUI
+import CoreData
 
 struct AddProductView: View {
     @Environment(\.managedObjectContext) private var viewContext
