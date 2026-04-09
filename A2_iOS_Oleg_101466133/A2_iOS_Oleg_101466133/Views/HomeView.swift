@@ -8,7 +8,7 @@ struct HomeView: View {
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \ProductEntity.name, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \ProductEntity.productID, ascending: true)],
         animation: .default
     )
     private var products: FetchedResults<ProductEntity>
@@ -24,12 +24,22 @@ struct HomeView: View {
 
                 if products.isEmpty {
                     Spacer()
+
                     Text("No products found")
                         .font(.title3)
+                        .fontWeight(.semibold)
+
+                    Text("Tap the button below to load the sample products.")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+
                     Button("Load Sample Products") {
                         seedProductsIfNeeded()
                     }
                     .buttonStyle(.borderedProminent)
+
                     Spacer()
                 } else {
                     let product = products[currentIndex]
@@ -78,8 +88,9 @@ struct HomeView: View {
             .navigationTitle("First Product")
             .onAppear {
                 seedProductsIfNeeded()
+
                 if !products.isEmpty {
-                    currentIndex = 0
+                    currentIndex = min(currentIndex, max(products.count - 1, 0))
                 }
             }
         }
