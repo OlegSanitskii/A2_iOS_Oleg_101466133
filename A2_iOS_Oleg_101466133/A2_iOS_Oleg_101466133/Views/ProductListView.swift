@@ -7,7 +7,7 @@ struct ProductListView: View {
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \ProductEntity.name, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \ProductEntity.productID, ascending: true)],
         animation: .default
     )
     private var products: FetchedResults<ProductEntity>
