@@ -93,6 +93,13 @@ struct HomeView: View {
                     currentIndex = min(currentIndex, max(products.count - 1, 0))
                 }
             }
+            .onChange(of: products.count) { _, newCount in
+                if newCount == 0 {
+                    currentIndex = 0
+                } else if currentIndex >= newCount {
+                    currentIndex = newCount - 1
+                }
+            }
         }
     }
 
