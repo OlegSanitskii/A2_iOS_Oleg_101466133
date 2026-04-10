@@ -86,6 +86,13 @@ struct HomeView: View {
             }
             .padding()
             .navigationTitle("First Product")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Reset") {
+                        resetSampleProducts()
+                    }
+                }
+            }
             .onAppear {
                 seedProductsIfNeeded()
 
@@ -133,6 +140,20 @@ struct HomeView: View {
             try viewContext.save()
         } catch {
             print("Failed to seed products: \(error.localizedDescription)")
+        }
+    }
+
+    private func resetSampleProducts() {
+        for product in products {
+            viewContext.delete(product)
+        }
+
+        do {
+            try viewContext.save()
+            currentIndex = 0
+            seedProductsIfNeeded()
+        } catch {
+            print("Failed to reset products: \(error.localizedDescription)")
         }
     }
 }
