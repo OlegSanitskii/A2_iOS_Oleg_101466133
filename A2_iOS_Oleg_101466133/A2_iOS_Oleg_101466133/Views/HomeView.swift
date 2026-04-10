@@ -64,18 +64,22 @@ struct HomeView: View {
                         .foregroundColor(.secondary)
 
                     HStack(spacing: 20) {
-                        Button("Previous") {
+                        Button {
                             if currentIndex > 0 {
                                 currentIndex -= 1
                             }
+                        } label: {
+                            Label("Previous", systemImage: "chevron.left")
                         }
                         .buttonStyle(.bordered)
                         .disabled(currentIndex == 0)
 
-                        Button("Next") {
+                        Button {
                             if currentIndex < products.count - 1 {
                                 currentIndex += 1
                             }
+                        } label: {
+                            Label("Next", systemImage: "chevron.right")
                         }
                         .buttonStyle(.borderedProminent)
                         .disabled(currentIndex == products.count - 1)
