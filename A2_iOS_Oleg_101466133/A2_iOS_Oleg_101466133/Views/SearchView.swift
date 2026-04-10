@@ -65,6 +65,13 @@ struct SearchView: View {
             }
             .navigationTitle("Search Products")
             .searchable(text: $searchText, prompt: "Search by name or description")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Text("\(filteredProducts.count)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
         }
     }
 
