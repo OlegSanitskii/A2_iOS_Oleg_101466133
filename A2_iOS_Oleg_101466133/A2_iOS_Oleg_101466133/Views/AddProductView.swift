@@ -6,7 +6,6 @@ import CoreData
 
 struct AddProductView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @FocusState private var priceFieldFocused: Bool
 
     @State private var productID = ""
     @State private var name = ""
@@ -44,7 +43,6 @@ struct AddProductView: View {
 
                     TextField("Price", text: $price)
                         .keyboardType(.decimalPad)
-                        .focused($priceFieldFocused)
 
                     TextField("Provider", text: $provider)
                 }
@@ -62,15 +60,6 @@ struct AddProductView: View {
                 }
             }
             .navigationTitle("Add Product")
-            .toolbar {
-                ToolbarItemGroup(placement: .keyboard) {
-                    Spacer()
-
-                    Button("Done") {
-                        priceFieldFocused = false
-                    }
-                }
-            }
             .alert(alertTitle, isPresented: $showAlert) {
                 Button("OK", role: .cancel) { }
             } message: {
@@ -155,6 +144,5 @@ struct AddProductView: View {
         productDescription = ""
         price = ""
         provider = ""
-        priceFieldFocused = false
     }
 }
