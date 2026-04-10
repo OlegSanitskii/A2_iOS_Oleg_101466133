@@ -21,6 +21,18 @@ struct AddProductView: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Student")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+
+                        Text("Oleg Sanitskii - 101466133")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                    }
+                }
+
                 Section("Product Information") {
                     TextField("Product ID", text: $productID)
                         .textInputAutocapitalization(.characters)
