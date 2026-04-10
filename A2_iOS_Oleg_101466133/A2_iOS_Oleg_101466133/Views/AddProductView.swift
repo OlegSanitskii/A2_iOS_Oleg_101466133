@@ -80,7 +80,10 @@ struct AddProductView: View {
     }
 
     private func addProduct() {
-        let trimmedProductID = productID.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedProductID = productID
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .uppercased()
+
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedDescription = productDescription.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedPrice = price.trimmingCharacters(in: .whitespacesAndNewlines)
