@@ -38,22 +38,24 @@ struct ProductListView: View {
                     }
                     .padding()
                 } else {
-                    ScrollView {
-                        LazyVStack(spacing: 14) {
-                            ForEach(products) { product in
-                                productCard(for: product)
-                                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                        Button(role: .destructive) {
-                                            productToDelete = product
-                                            showDeleteAlert = true
-                                        } label: {
-                                            Label("Delete", systemImage: "trash")
-                                        }
+                    List {
+                        ForEach(products) { product in
+                            productCard(for: product)
+                                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                                .listRowSeparator(.hidden)
+                                .listRowBackground(Color.clear)
+                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                    Button(role: .destructive) {
+                                        productToDelete = product
+                                        showDeleteAlert = true
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
                                     }
-                            }
+                                }
                         }
-                        .padding()
                     }
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
                     .background(Color(.systemGroupedBackground))
                 }
             }
