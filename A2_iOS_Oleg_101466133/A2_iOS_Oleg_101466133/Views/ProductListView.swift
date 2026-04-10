@@ -12,35 +12,87 @@ struct ProductListView: View {
     )
     private var products: FetchedResults<ProductEntity>
 
+    @State private var productToDelete: ProductEntity?
+    @State private var showDeleteAlert = false
+
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(products) { product in
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(product.name ?? "No Name")
-                            .font(.headline)
+            Group {
+                if products.isEmpty {
+                    VStack(spacing: 12) {
+                        Spacer()
 
-                        Text(product.productDescription ?? "No Description")
+                        Image(systemName: "shippingbox")
+                            .font(.system(size: 48))
+                            .foregroundColor(.gray)
+
+                        Text("No products available")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+
+                        Text("Add a new product to see it here.")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
+
+                        Spacer()
                     }
-                    .padding(.vertical, 4)
+                    .padding()
+                } else {
+                    List {
+                        ForEach(products) { product in
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(product.name ?? "No Name")
+                                    .font(.headline)
+
+                                Text(product.productDescription ?? "No Description")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+
+                                Text("ID: \(product.productID ?? "")")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+
+                                Text(String(format: "$%.2f", product.price))
+                                    .font(.caption)
+
+                                Text("Provider: \(product.provider ?? "")")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                            }
+                            .padding(.vertical, 4)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                Button(role: .destructive) {
+                                    productToDelete = product
+                                    showDeleteAlert = true
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
+                        }
+                    }
+                    .listStyle(.plain)
                 }
-                .onDelete(perform: deleteProducts)
             }
             .navigationTitle("All Products")
+            .alert("Delete Product", isPresented: $showDeleteAlert, presenting: productToDelete) { product in
+                Button("Delete", role: .destructive) {
+                    delete(product)
+                }
+
+                Button("Cancel", role: .cancel) { }
+            } message: { product in
+                Text("Are you sure you want to delete \(product.name ?? "this product")?")
+            }
         }
     }
 
-    private func deleteProducts(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { products[$0] }.forEach(viewContext.delete)
+    private func delete(_ product: ProductEntity) {
+        viewContext.delete(product)
 
-            do {
-                try viewContext.save()
-            } catch {
-                print("Failed to delete product: \(error.localizedDescription)")
-            }
+        do {
+            try viewContext.save()
+        } catch {
+            print("Failed to delete product: \(error.localizedDescription)")
         }
     }
 }
