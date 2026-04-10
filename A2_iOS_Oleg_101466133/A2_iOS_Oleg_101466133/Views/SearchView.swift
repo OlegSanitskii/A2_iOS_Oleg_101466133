@@ -5,8 +5,6 @@ import SwiftUI
 import CoreData
 
 struct SearchView: View {
-    @Environment(\.managedObjectContext) private var viewContext
-
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \ProductEntity.productID, ascending: true)],
         animation: .default
@@ -29,48 +27,88 @@ struct SearchView: View {
 
     var body: some View {
         NavigationStack {
-            VStack {
-                TextField("Search by name or description", text: $searchText)
-                    .textFieldStyle(.roundedBorder)
-                    .padding()
-
+            Group {
                 if filteredProducts.isEmpty {
-                    Spacer()
+                    VStack(spacing: 12) {
+                        Spacer()
 
-                    Text("No matching products found")
-                        .font(.title3)
-                        .fontWeight(.semibold)
+                        Image(systemName: "magnifyingglass")
+                            .font(.system(size: 46))
+                            .foregroundColor(.gray)
 
-                    Text("Try searching with a different product name or description.")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
+                        Text("No matching products found")
+                            .font(.title3)
+                            .fontWeight(.semibold)
 
-                    Spacer()
+                        Text("Try searching with a different product name or description.")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+
+                        Spacer()
+                    }
+                    .padding()
                 } else {
-                    List(filteredProducts) { product in
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(product.name ?? "No Name")
-                                .font(.headline)
-
-                            Text(product.productDescription ?? "No Description")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-
-                            Text(String(format: "$%.2f", product.price))
-                                .font(.subheadline)
-
-                            Text("Provider: \(product.provider ?? "")")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                    List {
+                        ForEach(filteredProducts) { product in
+                            searchCard(for: product)
+                                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                                .listRowSeparator(.hidden)
+                                .listRowBackground(Color.clear)
                         }
-                        .padding(.vertical, 4)
                     }
                     .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
+                    .background(Color(.systemGroupedBackground))
                 }
             }
             .navigationTitle("Search Products")
+            .searchable(text: $searchText, prompt: "Search by name or description")
         }
+    }
+
+    @ViewBuilder
+    private func searchCard(for product: ProductEntity) -> some View {
+        HStack(alignment: .top, spacing: 14) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.green.opacity(0.12))
+                    .frame(width: 52, height: 52)
+
+                Image(systemName: "magnifyingglass.circle.fill")
+                    .font(.title3)
+                    .foregroundColor(.green)
+            }
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text(product.name ?? "No Name")
+                    .font(.headline)
+
+                Text(product.productDescription ?? "No Description")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+
+                HStack {
+                    Text(product.productID ?? "")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Spacer()
+
+                    Text(String(format: "$%.2f", product.price))
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                }
+
+                Text("Provider: \(product.provider ?? "")")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding()
+        .background(Color(.systemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 2)
     }
 }
