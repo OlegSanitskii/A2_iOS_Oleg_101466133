@@ -38,39 +38,23 @@ struct ProductListView: View {
                     }
                     .padding()
                 } else {
-                    List {
-                        ForEach(products) { product in
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(product.name ?? "No Name")
-                                    .font(.headline)
-
-                                Text(product.productDescription ?? "No Description")
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-
-                                Text("ID: \(product.productID ?? "")")
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
-
-                                Text(String(format: "$%.2f", product.price))
-                                    .font(.caption)
-
-                                Text("Provider: \(product.provider ?? "")")
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
-                            }
-                            .padding(.vertical, 4)
-                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                Button(role: .destructive) {
-                                    productToDelete = product
-                                    showDeleteAlert = true
-                                } label: {
-                                    Label("Delete", systemImage: "trash")
-                                }
+                    ScrollView {
+                        LazyVStack(spacing: 14) {
+                            ForEach(products) { product in
+                                productCard(for: product)
+                                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                        Button(role: .destructive) {
+                                            productToDelete = product
+                                            showDeleteAlert = true
+                                        } label: {
+                                            Label("Delete", systemImage: "trash")
+                                        }
+                                    }
                             }
                         }
+                        .padding()
                     }
-                    .listStyle(.plain)
+                    .background(Color(.systemGroupedBackground))
                 }
             }
             .navigationTitle("All Products")
@@ -84,6 +68,50 @@ struct ProductListView: View {
                 Text("Are you sure you want to delete \(product.name ?? "this product")?")
             }
         }
+    }
+
+    @ViewBuilder
+    private func productCard(for product: ProductEntity) -> some View {
+        HStack(alignment: .top, spacing: 14) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.blue.opacity(0.12))
+                    .frame(width: 52, height: 52)
+
+                Image(systemName: "cube.box.fill")
+                    .font(.title3)
+                    .foregroundColor(.blue)
+            }
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text(product.name ?? "No Name")
+                    .font(.headline)
+
+                Text(product.productDescription ?? "No Description")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+
+                HStack {
+                    Text(product.productID ?? "")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Spacer()
+
+                    Text(String(format: "$%.2f", product.price))
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                }
+
+                Text("Provider: \(product.provider ?? "")")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding()
+        .background(Color(.systemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 2)
     }
 
     private func delete(_ product: ProductEntity) {
